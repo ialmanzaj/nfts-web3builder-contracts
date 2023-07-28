@@ -2,8 +2,10 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import "../src/Web3Builder.sol";
 import "forge-std/console.sol";
+
+import {Web3Builder} from "../src/Web3Builder.sol";
+
 
 contract Web3BuilderTest is Test {
     //1. Max Supply
