@@ -10,12 +10,14 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 contract Web3Builder is ERC721, ERC721Enumerable, Pausable, Ownable {
     using Counters for Counters.Counter;
 
-    uint maxSupply = 999;
+    uint public constant MAX_SUPPLY = 999;
+    uint public constant COST = 0.01 ether;
+
     bool public allowListMintOpen = false;
     bool public allowListPublicMintOpen = false;
     mapping(address => bool) public reservedList;
 
-    Counters.Counter private _tokenIdCounter;
+    uint private _tokenIdCounter;
 
     constructor() ERC721("Web3Builder", "WEB3") {}
 
@@ -31,6 +33,10 @@ contract Web3Builder is ERC721, ERC721Enumerable, Pausable, Ownable {
         _unpause();
     }
 
+    function isAddressReserved(address addr) public view returns (bool) {
+        return reservedList[addr];
+    }
+
     function editMintWindows(
         bool _allowListMintOpen, 
         bool _allowListPublicMintOpen) external onlyOwner{
@@ -40,7 +46,7 @@ contract Web3Builder is ERC721, ERC721Enumerable, Pausable, Ownable {
 
     // add Payment
     // add limiting of supply
-    function publicMint() public  payable {
+    function publicMint() public payable {
         require(allowListPublicMintOpen, "Not open the public mint");
         internalMint();
     }
@@ -60,10 +66,10 @@ contract Web3Builder is ERC721, ERC721Enumerable, Pausable, Ownable {
     }
 
     function internalMint() internal  {
-        require(msg.value == 0.01 ether, "Not enough funds");
-        require(totalSupply() < maxSupply, "We sold out");
-        uint256 tokenId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
+        require(msg.value == COST, "Not enough funds");
+        require(totalSupply() < MAX_SUPPLY, "We sold out");
+        uint tokenId = _tokenIdCounter;
+        _tokenIdCounter++;
         _safeMint(msg.sender, tokenId);
     }
 
