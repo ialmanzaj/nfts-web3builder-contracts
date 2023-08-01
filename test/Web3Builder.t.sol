@@ -6,7 +6,6 @@ import "forge-std/console.sol";
 
 import {Web3Builder} from "../src/Web3Builder.sol";
 
-
 contract Web3BuilderTest is Test {
     //1. Max Supply
     //2. Successful mint
@@ -16,16 +15,17 @@ contract Web3BuilderTest is Test {
     address owner = address(0x1223);
     address alice = address(0x1889);
     address bob = address(0x1778);
+    address jake = address(0x42910);
 
     address[] allowList = new address[](2);
-  
+
     Web3Builder public builder;
 
     function setUp() public {
         vm.startPrank(owner);
         builder = new Web3Builder();
         builder.editMintWindows(true, true);
-        vm.stopPrank(); 
+        vm.stopPrank();
     }
 
     function testMaxSupply() public {
@@ -34,26 +34,26 @@ contract Web3BuilderTest is Test {
 
     // test for unsuccesfull mint due to insuffucient funds
     function testCannotPublicMint() public {
-         // switch account
+        // switch account
         vm.startPrank(bob);
-        //and give it some money 
+        //and give it some money
         vm.deal(bob, 0.001 ether);
         vm.expectRevert();
         builder.publicMint{value: 0.001 ether}();
     }
 
-    // test for a succesfull mint 
+    // test for a succesfull mint
     function testPublicMintOpened() public {
         // switch account
         vm.startPrank(alice);
-        //and give it some money 
+        //and give it some money
         vm.deal(alice, 1 ether);
         builder.publicMint{value: 0.01 ether}();
         vm.stopPrank();
         assertEq(builder.balanceOf(alice), 1);
     }
 
-     // test to succesfull set allowlist 
+    // test to succesfull set allowlist
     function testSetAllowList() public {
         // switch account
         vm.startPrank(owner);
@@ -61,6 +61,36 @@ contract Web3BuilderTest is Test {
         allowList[1] = alice;
         builder.setAllowList(allowList);
         assertEq(builder.isAddressReserved(bob), true);
+    }
+
+    // test to succesfull set allowlist
+    function testWhiteListMint() public {
+        // switch account
+        vm.startPrank(owner);
+        allowList[0] = bob;
+        builder.setAllowList(allowList);
+        vm.stopPrank();
+        assertEq(builder.isAddressReserved(bob), true);
+        vm.startPrank(bob);
+        vm.deal(bob, 0.01 ether);
+        builder.allowListMint{value: 0.01 ether}();
+        assertEq(builder.balanceOf(bob), 1);
+        vm.stopPrank();
+    }
+
+    // test to unsuccesfull  allowlist mint
+    function testWhiteListMintFail() public {
+        // switch account
+        vm.startPrank(owner);
+        allowList[0] = bob;
+        builder.setAllowList(allowList);
+        vm.stopPrank();
+        assertEq(builder.isAddressReserved(bob), true);
+        vm.startPrank(jake);
+        vm.deal(jake, 0.01 ether);
+        vm.expectRevert();
+        builder.allowListMint{value: 0.01 ether}();
+        vm.stopPrank();
     }
 
     // test to unsuccesfull set allowlist unauthorized
@@ -72,6 +102,4 @@ contract Web3BuilderTest is Test {
         vm.expectRevert();
         builder.setAllowList(allowList);
     }
-
-
 }

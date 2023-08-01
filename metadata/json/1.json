@@ -1,0 +1,19 @@
+{
+    "name": "Web3builder #1",
+    "description": "",
+    "image": "ipfs/QmYWEGzxSF9aoTpNVBTbCpjsAvbw7H57oNT9RB5QTiH54v/1.jpeg",
+    "attributes": [
+        {
+            "trait_type": "Language",
+            "value": "Java"
+        },
+        {
+            "trait_type": "OS",
+            "value": "Window"
+        },
+        {
+            "trait_type": "Speed",
+            "value": "Slow"
+        }
+    ]
+}

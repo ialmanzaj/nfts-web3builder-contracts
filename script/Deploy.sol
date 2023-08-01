@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import {Script} from "forge-std/Script.sol";
+import "forge-std/Script.sol";
 import {Web3Builder} from "../src/Web3Builder.sol";
 
 contract DeployWeb3Builder is Script {

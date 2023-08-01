@@ -10,19 +10,19 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 contract Web3Builder is ERC721, ERC721Enumerable, Pausable, Ownable {
     using Counters for Counters.Counter;
 
-    uint public constant MAX_SUPPLY = 999;
-    uint public constant COST = 0.01 ether;
+    uint256 public constant MAX_SUPPLY = 999;
+    uint256 public constant COST = 0.01 ether;
 
     bool public allowListMintOpen = false;
     bool public allowListPublicMintOpen = false;
     mapping(address => bool) public reservedList;
 
-    uint private _tokenIdCounter;
+    uint256 private _tokenIdCounter;
 
     constructor() ERC721("Web3Builder", "WEB3") {}
 
     function _baseURI() internal pure override returns (string memory) {
-        return "ipfs://QmY5rPqGTN1rZxMQg2ApiSZc7JiBNs1ryDzXPZpQhC1ibm/";
+        return "ipfs://QmfSUzU5uftxRiN7pbRSP7ge61UZJB8AEmivQUapkCkxaW/";
     }
 
     function pause() public onlyOwner {
@@ -37,9 +37,7 @@ contract Web3Builder is ERC721, ERC721Enumerable, Pausable, Ownable {
         return reservedList[addr];
     }
 
-    function editMintWindows(
-        bool _allowListMintOpen, 
-        bool _allowListPublicMintOpen) external onlyOwner{
+    function editMintWindows(bool _allowListMintOpen, bool _allowListPublicMintOpen) external onlyOwner {
         allowListMintOpen = _allowListMintOpen;
         allowListPublicMintOpen = _allowListPublicMintOpen;
     }
@@ -52,43 +50,38 @@ contract Web3Builder is ERC721, ERC721Enumerable, Pausable, Ownable {
     }
 
     function setAllowList(address[] calldata addresses) external onlyOwner {
-        for(uint i; i< addresses.length;i++) {
+        for (uint256 i; i < addresses.length; i++) {
             reservedList[addresses[i]] = true;
         }
     }
 
     // add Payment
     // add limiting of supply
-    function allowListMint() public  payable {
+    function allowListMint() public payable {
         require(allowListMintOpen, "Not open the public mint");
         require(reservedList[msg.sender], "You are not in the VIP list");
         internalMint();
     }
 
-    function internalMint() internal  {
+    function internalMint() internal {
         require(msg.value == COST, "Not enough funds");
         require(totalSupply() < MAX_SUPPLY, "We sold out");
-        uint tokenId = _tokenIdCounter;
+        uint256 tokenId = _tokenIdCounter;
         _tokenIdCounter++;
         _safeMint(msg.sender, tokenId);
     }
 
     function _beforeTokenTransfer(address from, address to, uint256 tokenId, uint256 batchSize)
         internal
-        whenNotPaused
         override(ERC721, ERC721Enumerable)
+        whenNotPaused
     {
         super._beforeTokenTransfer(from, to, tokenId, batchSize);
     }
 
     // The following functions are overrides required by Solidity.
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC721, ERC721Enumerable)
-        returns (bool)
-    {
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721Enumerable) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }

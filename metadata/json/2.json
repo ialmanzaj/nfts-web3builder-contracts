@@ -1,0 +1,19 @@
+{
+    "name": "Web3builder #1",
+    "description": "",
+    "image": "ipfs/QmYWEGzxSF9aoTpNVBTbCpjsAvbw7H57oNT9RB5QTiH54v/2.jpeg",
+    "attributes": [
+        {
+            "trait_type": "Language",
+            "value": "Python"
+        },
+        {
+            "trait_type": "OS",
+            "value": "Linux"
+        },
+        {
+            "trait_type": "Speed",
+            "value": "Medium"
+        }
+    ]
+}
